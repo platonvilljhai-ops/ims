@@ -1,0 +1,21 @@
+/* Color scheme */
+:root {
+  --brand-green: #14AE5C;
+  --brand-green-hover: #11964f;
+  --bg-slate: #f8fafc;
+}
+
+/* Table lining */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}

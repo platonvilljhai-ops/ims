@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Details - EduShelf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+  <div class="min-h-screen flex flex-col lg:flex-row w-full">
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-slate-200 flex-shrink-0 flex flex-col justify-between">
+      <div>
+        <div class="h-16 px-6 flex items-center justify-between border-b border-slate-200">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-[#14AE5C] flex items-center justify-center text-white font-bold">
+              <i data-lucide="boxes" class="w-4 h-4"></i>
+            </div>
+            <span class="font-semibold text-slate-900">EduShelf</span>
+          </div>
+        </div>
+
+        <nav class="p-4 space-y-1">
+          <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i> Dashboard
+          </a>
+          <a href="inventory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-[#14AE5C]/10 text-[#14AE5C]">
+            <i data-lucide="package" class="w-4 h-4 text-[#14AE5C]"></i> Inventory Stock
+          </a>
+          <a href="#" onclick="alert('Supply Requests module coming soon!')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
+            <i data-lucide="arrow-left-right" class="w-4 h-4 text-slate-400"></i> Supply Requests
+          </a>
+          <a href="#" onclick="alert('Activity Audit Log module coming soon!')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
+            <i data-lucide="file-clock" class="w-4 h-4 text-slate-400"></i> Activity Audit Log
+          </a>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Avatar" class="w-full h-full object-cover">
+        </div>
+        <div class="min-w-0">
+          <p id="sidebarProfileName" class="text-xs font-semibold text-slate-900 truncate">Juan Dela Cruz</p>
+          <p id="sidebarProfileRole" class="text-[11px] text-slate-500 truncate">Administrator</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+          <div>
+            <a href="inventory.html" class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 mb-1">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Inventory
+            </a>
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 id="detailHeaderTitle" class="text-xl sm:text-2xl font-bold text-slate-900">Item Details</h1>
+              <span id="detailHeaderCode" class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-mono text-xs font-medium text-slate-700"></span>
+              <span id="detailHeaderBadge" class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold"></span>
+            </div>
+          </div>
+
+          <div id="headerActions" class="flex items-center gap-2.5">
+            <button onclick="handleDeleteItem()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-rose-200 bg-white hover:bg-rose-50 text-sm font-medium text-rose-600 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+            </button>
+            <a id="editItemBtn" href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#14AE5C] hover:bg-[#11964f] text-sm font-semibold text-white shadow-sm transition">
+              <i data-lucide="pencil" class="w-4 h-4"></i> Edit Item
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-8">
+        <!-- Not Found Fallback -->
+        <div id="notFoundState" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="package-x" class="w-6 h-6"></i>
+          </div>
+          <h2 class="text-base font-semibold text-slate-900">Inventory Item Not Found</h2>
+          <p class="text-xs text-slate-500 mt-1 mb-5">The requested SKU does not exist or may have been removed.</p>
+          <a href="inventory.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#14AE5C] hover:bg-[#11964f] text-sm font-semibold text-white transition">
+            Return to Inventory
+          </a>
+        </div>
+
+        <!-- Loaded Item View -->
+        <div id="itemDetailsContent" class="w-full space-y-6">
+          <!-- KPI Strip -->
+          <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+              <span class="text-xs text-slate-500 uppercase font-medium">Stock on Hand</span>
+              <p id="kpiStockQty" class="text-2xl font-bold text-slate-900 tabular-nums mt-2">0</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+              <span class="text-xs text-slate-500 uppercase font-medium">Unit Price</span>
+              <p id="kpiUnitPrice" class="text-2xl font-bold text-slate-900 tabular-nums mt-2">₱0.00</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+              <span class="text-xs text-slate-500 uppercase font-medium">Total Valuation</span>
+              <p id="kpiTotalValue" class="text-2xl font-bold text-[#14AE5C] tabular-nums mt-2">₱0.00</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+              <span class="text-xs text-slate-500 uppercase font-medium">Min Stock Threshold</span>
+              <p id="kpiThreshold" class="text-2xl font-bold text-slate-900 tabular-nums mt-2">0</p>
+            </div>
+          </section>
+
+          <!-- Details & Audit Log Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Item Specifications Card -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs lg:col-span-1 h-fit">
+              <h2 class="text-base font-semibold text-slate-900 pb-4 border-b border-slate-200">Item Specifications</h2>
+              <dl class="divide-y divide-slate-100 text-sm mt-2">
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <dt class="text-slate-500">Product Code</dt>
+                  <dd id="specCode" class="font-mono font-medium text-slate-900"></dd>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <dt class="text-slate-500">Category</dt>
+                  <dd id="specCategory" class="font-medium text-slate-900"></dd>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <dt class="text-slate-500">Storage Location</dt>
+                  <dd id="specLocation" class="font-medium text-slate-900"></dd>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <dt class="text-slate-500">Alert Trigger</dt>
+                  <dd id="specThreshold" class="font-medium text-slate-900 tabular-nums"></dd>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <dt class="text-slate-500">Last Updated</dt>
+                  <dd id="specUpdatedAt" class="text-xs font-medium text-slate-600 text-right"></dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Item Audit Trail Card -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs lg:col-span-2">
+              <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-semibold text-slate-900">Record & Stock History</h2>
+                  <p class="text-xs text-slate-500">Chronological log of creation and edits for this SKU</p>
+                </div>
+              </div>
+
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase text-slate-500">
+                      <th class="py-3 px-6">Timestamp</th>
+                      <th class="py-3 px-4">Action</th>
+                      <th class="py-3 px-4">Details</th>
+                      <th class="py-3 px-6">User</th>
+                    </tr>
+                  </thead>
+                  <tbody id="itemHistoryBody" class="divide-y divide-slate-100 text-sm">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var itemCode = params.get("code");
+    var currentItem = getItemByCode(itemCode);
+
+    if (!currentItem) {
+      document.getElementById("itemDetailsContent").classList.add("hidden");
+      document.getElementById("headerActions").classList.add("hidden");
+      document.getElementById("notFoundState").classList.remove("hidden");
+    } else {
+      document.title = currentItem.product_name + " - EduShelf";
+      document.getElementById("detailHeaderTitle").innerText = currentItem.product_name;
+      document.getElementById("detailHeaderCode").innerText = currentItem.product_code;
+
+      var badgeEl = document.getElementById("detailHeaderBadge");
+      badgeEl.innerText = currentItem.status;
+      badgeEl.className = "inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold " + getStatusBadgeClass(currentItem.status);
+
+      document.getElementById("editItemBtn").href = "edit.html?code=" + encodeURIComponent(currentItem.product_code);
+      
+      var totalVal = currentItem.quantity * parseFloat(currentItem.unit_price);
+      document.getElementById("kpiStockQty").innerText = currentItem.quantity + " units";
+      document.getElementById("kpiUnitPrice").innerText = "₱" + currentItem.unit_price;
+      document.getElementById("kpiTotalValue").innerText = "₱" + totalVal.toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      document.getElementById("kpiThreshold").innerText = currentItem.threshold + " units";
+
+      document.getElementById("specCode").innerText = currentItem.product_code;
+      document.getElementById("specCategory").innerText = currentItem.category;
+      document.getElementById("specLocation").innerText = currentItem.location;
+      document.getElementById("specThreshold").innerText = "≤ " + currentItem.threshold + " units";
+      document.getElementById("specUpdatedAt").innerText = currentItem.updatedAt || "—";
+
+      var historyBody = document.getElementById("itemHistoryBody");
+      var logs = currentItem.history || [];
+      historyBody.innerHTML = "";
+
+      if (logs.length === 0) {
+        historyBody.innerHTML = '<tr><td colspan="4" class="py-6 px-6 text-center text-xs text-slate-500">No recorded history yet.</td></tr>';
+      } else {
+        for (var i = 0; i < logs.length; i++) {
+          var entry = logs[i];
+          historyBody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-6 text-xs text-slate-500 whitespace-nowrap">${entry.date}</td>
+              <td class="py-3.5 px-4 font-medium text-slate-900 whitespace-nowrap">${entry.action}</td>
+              <td class="py-3.5 px-4 text-slate-600">${entry.details}</td>
+              <td class="py-3.5 px-6 text-slate-600 whitespace-nowrap">${entry.user}</td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    function handleDeleteItem() {
+      if (!currentItem) return;
+      var confirmed = confirm("Delete " + currentItem.product_name + " (" + currentItem.product_code + ")? This action cannot be undone.");
+      if (confirmed) {
+        deleteItem(currentItem.product_code);
+        window.location.href = "inventory.html";
+      }
+    }
+  </script>
+</body>
+</html>
