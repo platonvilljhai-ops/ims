@@ -5,6 +5,7 @@
 
 var STORAGE_KEY = "edushelf_inventory_v2";
 
+// Helper to get combined inventory
 var defaultInventory = [
   { product_code: "BP-BLK-001", product_name: "Ballpen (Black)", category: "Writing Tool", quantity: 150, unit_price: "10.00", location: "Shelf A1", threshold: 15, status: "With Stock" },
   { product_code: "BP-RED-002", product_name: "Ballpen (Red)", category: "Writing Tool", quantity: 8, unit_price: "12.50", location: "Shelf A1", threshold: 10, status: "Low Stock" },
@@ -214,6 +215,7 @@ function deleteItem(productCode) {
   return true;
 }
 
+// Helper to update sidebar profile name & role across pages
 function loadUserProfile() {
   if (localStorage.getItem("userName")) {
     var nameEl = document.getElementById("sidebarProfileName");
@@ -222,6 +224,7 @@ function loadUserProfile() {
     if (roleEl) roleEl.innerText = localStorage.getItem("userRole") || "Administrator";
   }
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
   initDatabase();
