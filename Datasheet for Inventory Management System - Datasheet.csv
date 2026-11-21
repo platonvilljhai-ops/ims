@@ -1,0 +1,13 @@
+inventoryStock,,,,,,
+product_code,product_name,category,quantity,unit_price,location,status
+BP-BLK-001,Ballpen (Black),Writing Tool,150,10.00,Shelf A1,With Stock
+BP-RED-002,Ballpen (Red),Writing Tool,8,12.50,Shelf A1,Low Stock
+YP-STD-003,Yellow Pad (100 sheets),Stationery,45,78.50,Shelf B2,With Stock
+BP-LNG-004,"Bond Paper (Long, Ream)",Stationery,20,240.00,Shelf B3,With Stock
+BP-SHT-005,"Bond Paper (Short, Ream)",Stationery,3,210.00,Shelf B3,Low Stock
+MRK-PER-006,Permanent Marker (Black),Writing Tool,0,35.00,Shelf A2,Out of Stock
+MRK-WBO-007,White Board Marker (Blue),Writing Tool,30,38.00,Shelf A2,With Stock
+INK-BLK-008,"Printer Ink (Black, 70ml)",Printer Supplies,12,350.00,Cabinet C1,With Stock
+INK-CYN-0009,"Printer Ink (Cyan, 70ml)",Printer Supplies,4,350.00,Cabinet C1,Low Stock
+INK-YLW-010,"Printer Ink (Yellow, 70ml)",Printer Supplies,0,350.00,Cabinet C1,Out of Stock
+INK-MAG-011,"Printer Ink (Magenta, 70ml)",Printer Supplies,10,350.00,Cabinet C1,With Stock
