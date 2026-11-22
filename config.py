@@ -4,17 +4,60 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
-DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-DB_PORT = int(os.getenv("DB_PORT", "3306"))
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-DB_NAME = os.getenv("DB_NAME", "edushelf_db")
+
+def _settings_from_database_url(url: str) -> dict[str, str | int]:
+    """Parse Railway's MYSQL_URL (or a generic DATABASE_URL) into DB settings."""
+    parsed = urlparse(url)
+    return {
+        "host": parsed.hostname or "127.0.0.1",
+        "port": parsed.port or 3306,
+        "user": unquote(parsed.username or ""),
+        "password": unquote(parsed.password or ""),
+        "database": unquote(parsed.path.lstrip("/").split("?", 1)[0])
+        or "edushelf_db",
+    }
+
+
+_database_url = os.getenv("MYSQL_URL") or os.getenv("DATABASE_URL") or ""
+_url_settings = _settings_from_database_url(_database_url) if _database_url else {}
+
+DB_HOST = (
+    _url_settings.get("host")
+    or os.getenv("DB_HOST")
+    or os.getenv("MYSQLHOST")
+    or "127.0.0.1"
+)
+DB_PORT = int(
+    _url_settings.get("port")
+    or os.getenv("DB_PORT")
+    or os.getenv("MYSQLPORT")
+    or 3306
+)
+DB_USER = (
+    _url_settings.get("user")
+    or os.getenv("DB_USER")
+    or os.getenv("MYSQLUSER")
+    or "root"
+)
+DB_PASSWORD = str(
+    _url_settings.get("password")
+    or os.getenv("DB_PASSWORD")
+    or os.getenv("MYSQLPASSWORD")
+    or ""
+)
+DB_NAME = (
+    _url_settings.get("database")
+    or os.getenv("DB_NAME")
+    or os.getenv("MYSQLDATABASE")
+    or "edushelf_db"
+)
 
 DB_CONFIG = {
     "host": DB_HOST,
@@ -31,7 +74,17 @@ DB_CONFIG = {
 }
 
 SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
-SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+IS_RAILWAY = bool(
+    os.getenv("RAILWAY_ENVIRONMENT")
+    or os.getenv("RAILWAY_PROJECT_ID")
+    or os.getenv("RAILWAY_PUBLIC_DOMAIN")
+)
+_session_cookie_secure = os.getenv("SESSION_COOKIE_SECURE", "").strip()
+SESSION_COOKIE_SECURE = (
+    _session_cookie_secure.lower() == "true"
+    if _session_cookie_secure
+    else IS_RAILWAY
+)
 SESSION_LIFETIME_HOURS = 8
 CORS_ORIGINS = [
     origin.strip()
