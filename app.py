@@ -44,6 +44,7 @@ from config import (
 from db import get_db_cursor
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
+ALLOWED_EMAIL_DOMAIN = "edushelf.edu.ph"
 PRODUCT_CODE_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,19}$")
 ALLOWED_STATIC_EXTENSIONS = {
     ".html",
@@ -63,7 +64,11 @@ LOCKED_MESSAGE = (
     "Account is locked due to multiple failed login attempts. "
     "Please contact an Administrator."
 )
-LOCKOUT_BANNER = "Account locked. Confirmation email sent to your registered address."
+LOCKOUT_BANNER = (
+    "Your account has been locked following multiple failed sign-in attempts. "
+    "A security notification regarding suspected unauthorized access has been "
+    "sent to your registered email address. Please contact the Administrator."
+)
 
 SELECT_ITEM_SQL = """
     SELECT product_code, product_name, category, quantity, unit_price,
@@ -269,6 +274,8 @@ def normalize_email(value: Any) -> str:
         raise ValidationError("Email must be at most 100 characters.")
     if not EMAIL_PATTERN.fullmatch(email):
         raise ValidationError("Enter a valid email address.")
+    if not email.endswith("@" + ALLOWED_EMAIL_DOMAIN):
+        raise ValidationError(f"Only @{ALLOWED_EMAIL_DOMAIN} email addresses are allowed.")
     return email
 
 
