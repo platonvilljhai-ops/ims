@@ -63,6 +63,7 @@ LOCKED_MESSAGE = (
     "Account is locked due to multiple failed login attempts. "
     "Please contact an Administrator."
 )
+LOCKOUT_BANNER = "Account locked. Confirmation email sent to your registered address."
 
 SELECT_ITEM_SQL = """
     SELECT product_code, product_name, category, quantity, unit_price,
@@ -418,7 +419,11 @@ def login() -> tuple[Response, int]:
             return error_response("Invalid email or password", 401)
 
         if int(user["is_locked"]) == 1:
-            return error_response(LOCKED_MESSAGE, 403)
+            return jsonify({
+                "status": "error",
+                "message": LOCKED_MESSAGE,
+                "warning_banner": LOCKOUT_BANNER,
+            }), 403
 
         if not check_password_hash(user["password_hash"], password):
             attempts = int(user["failed_attempts"]) + 1
@@ -443,7 +448,11 @@ def login() -> tuple[Response, int]:
                         f"{MAX_LOGIN_ATTEMPTS} consecutive failed login attempts.",
                     ),
                 )
-                return error_response(LOCKED_MESSAGE, 403)
+                return jsonify({
+                    "status": "error",
+                    "message": LOCKED_MESSAGE,
+                    "warning_banner": LOCKOUT_BANNER,
+                }), 403
 
             cursor.execute(
                 """
@@ -455,12 +464,6 @@ def login() -> tuple[Response, int]:
             )
             remaining = MAX_LOGIN_ATTEMPTS - attempts
             message = f"Invalid email or password. {remaining} attempt(s) remaining."
-            if attempts >= 2:
-                return jsonify({
-                    "status": "error",
-                    "message": message,
-                    "warning_banner": "For your security, a confirmation email will be sent to your registered email address."
-                }), 401
             return error_response(message, 401)
 
         cursor.execute(

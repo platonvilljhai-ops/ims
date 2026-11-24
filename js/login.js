@@ -27,13 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       window.location.replace("dashboard.html");
     } catch (error) {
-      // Combine the security warning (after the 2nd failed attempt) with the
-      // standard error into one message — showBanner replaces banner text.
+      // On lockout the API supplies a concise security banner. Otherwise show
+      // the normal error. showBanner replaces text, so show only one message.
       const warning = error.payload && error.payload.warning_banner;
-      const message = error.message || "Unable to sign in. Please try again.";
       EduShelf.showBanner(
         banner,
-        warning ? `${warning} ${message}` : message,
+        warning || error.message || "Unable to sign in. Please try again.",
         warning ? "info" : "error"
       );
       EduShelf.setButtonLoading(submitButton, false);
