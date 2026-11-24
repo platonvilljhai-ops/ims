@@ -27,19 +27,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       window.location.replace("dashboard.html");
     } catch (error) {
-      // Check for security warning banner (after 2nd failed attempt)
-      if (error.payload && error.payload.warning_banner) {
-        EduShelf.showBanner(
-          banner,
-          error.payload.warning_banner,
-          "info"
-        );
-      }
-      // Always show the standard error message
+      // Combine the security warning (after the 2nd failed attempt) with the
+      // standard error into one message — showBanner replaces banner text.
+      const warning = error.payload && error.payload.warning_banner;
+      const message = error.message || "Unable to sign in. Please try again.";
       EduShelf.showBanner(
         banner,
-        error.message || "Unable to sign in. Please try again.",
-        "error"
+        warning ? `${warning} ${message}` : message,
+        warning ? "info" : "error"
       );
       EduShelf.setButtonLoading(submitButton, false);
       passwordInput.focus();
