@@ -27,6 +27,15 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       window.location.replace("dashboard.html");
     } catch (error) {
+      // Check for security warning banner (after 2nd failed attempt)
+      if (error.payload && error.payload.warning_banner) {
+        EduShelf.showBanner(
+          banner,
+          error.payload.warning_banner,
+          "info"
+        );
+      }
+      // Always show the standard error message
       EduShelf.showBanner(
         banner,
         error.message || "Unable to sign in. Please try again.",

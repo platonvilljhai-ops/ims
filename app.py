@@ -454,10 +454,14 @@ def login() -> tuple[Response, int]:
                 (attempts, user["user_id"]),
             )
             remaining = MAX_LOGIN_ATTEMPTS - attempts
-            return error_response(
-                f"Invalid email or password. {remaining} attempt(s) remaining.",
-                401,
-            )
+            message = f"Invalid email or password. {remaining} attempt(s) remaining."
+            if attempts >= 2:
+                return jsonify({
+                    "status": "error",
+                    "message": message,
+                    "warning_banner": "A security notice has been sent to your registered email address for your protection."
+                }), 401
+            return error_response(message, 401)
 
         cursor.execute(
             """
