@@ -459,7 +459,7 @@ def login() -> tuple[Response, int]:
                 return jsonify({
                     "status": "error",
                     "message": message,
-                    "warning_banner": "A security notice has been sent to your registered email address for your protection."
+                    "warning_banner": "For your security, a confirmation email will be sent to your registered email address."
                 }), 401
             return error_response(message, 401)
 
