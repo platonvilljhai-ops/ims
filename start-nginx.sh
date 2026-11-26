@@ -1,5 +1,5 @@
-#!/bin/sh
-set -eu
+#!/bin/bash
+set -euo pipefail
 
 python deploy/prepare_db.py
 
@@ -11,5 +11,15 @@ gunicorn \
     --access-logfile - \
     --error-logfile - \
     app:app &
+gunicorn_pid=$!
 
-exec nginx -g "daemon off;"
+nginx -g "daemon off;" &
+nginx_pid=$!
+
+cleanup() {
+    kill "$gunicorn_pid" "$nginx_pid" 2>/dev/null || true
+    wait "$gunicorn_pid" "$nginx_pid" 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+wait -n "$gunicorn_pid" "$nginx_pid"
