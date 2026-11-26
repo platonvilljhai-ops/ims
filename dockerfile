@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.main
 COPY start-nginx.sh /start-nginx.sh
 
 RUN chmod +x /start-nginx.sh
