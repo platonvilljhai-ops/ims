@@ -1,7 +1,5 @@
 # EduShelf Inventory Management System
 
-**Live demo:** [https://edushelf-web-production.up.railway.app](https://edushelf-web-production.up.railway.app)
-
 A full-stack inventory management system for EduShelf. The original static
 `localStorage` prototype is now backed by a Flask REST API and a normalized
 MySQL/MariaDB database, with session authentication, role-based access control,
@@ -42,6 +40,10 @@ ims/
 ├── db.py                      # Connection and cursor context manager
 ├── seed_from_excel.py         # Idempotent datasheet importer
 ├── schema.sql                 # Tables + idempotent seed data
+├── Dockerfile                 # Nginx + Gunicorn container
+├── docker-compose.yml         # Single-container deployment
+├── nginx.conf                 # Nginx reverse-proxy configuration
+├── start-nginx.sh             # Database bootstrap + web server startup
 ├── requirements.txt
 ├── .env.example
 ├── app.js                     # Shared fetch/UI helper (EduShelf global)
@@ -247,15 +249,29 @@ grep -RInE '\blocalStorage\b|\bvar\b|on(click|change|submit|input)=' --include='
 ```
 
 
-## Railway deployment
+## Docker deployment
 
-The project is deployed on Railway at:
-[https://edushelf-web-production.up.railway.app](https://edushelf-web-production.up.railway.app)
+The production image runs Nginx on port 80 and proxies requests to the Flask
+application served by Gunicorn on the container's loopback interface. The
+database is external to this container.
 
-Key configuration:
-- `railway.json` defines the build/deploy pipeline
-- `start.sh` runs database bootstrap + gunicorn
-- `deploy/prepare_db.py` applies schema and seeds data on container start
-- Environment variables: `MYSQL_URL`, `SECRET_KEY`, `SESSION_COOKIE_SECURE=true`, `FLASK_DEBUG=0`
+1. Install Docker Engine and the Docker Compose plugin on the server.
+2. Copy `.env.example` to `.env`. Set a strong `SECRET_KEY`, production
+   database settings (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`) or
+   `MYSQL_URL`, and `SESSION_COOKIE_SECURE=true` when serving the site over
+   HTTPS. The database host must be reachable from the Docker container.
+3. Start the service:
 
-Railway provides a managed MySQL service; the web service connects via `MYSQL_URL`.
+   ```bash
+   docker compose up -d --build
+   ```
+
+The service listens on port 80 by default; set `HTTP_PORT` in `.env` to change
+the host port. Use `docker compose logs -f web` to follow startup and database
+bootstrap logs. `deploy/prepare_db.py` applies the schema and seed data each
+time the container starts.
+
+Configure TLS and firewall access for the server before exposing the app
+publicly. The container's Nginx listener is HTTP; terminate HTTPS at a
+TLS-enabled reverse proxy or configure certificates for Nginx, and keep
+`SESSION_COOKIE_SECURE=true` when the public site uses HTTPS.

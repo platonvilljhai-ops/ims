@@ -13,7 +13,7 @@ load_dotenv(BASE_DIR / ".env")
 
 
 def _settings_from_database_url(url: str) -> dict[str, str | int]:
-    """Parse Railway's MYSQL_URL (or a generic DATABASE_URL) into DB settings."""
+    """Parse MYSQL_URL or DATABASE_URL into database settings."""
     parsed = urlparse(url)
     return {
         "host": parsed.hostname or "127.0.0.1",
@@ -74,16 +74,11 @@ DB_CONFIG = {
 }
 
 SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
-IS_RAILWAY = bool(
-    os.getenv("RAILWAY_ENVIRONMENT")
-    or os.getenv("RAILWAY_PROJECT_ID")
-    or os.getenv("RAILWAY_PUBLIC_DOMAIN")
-)
 _session_cookie_secure = os.getenv("SESSION_COOKIE_SECURE", "").strip()
 SESSION_COOKIE_SECURE = (
     _session_cookie_secure.lower() == "true"
     if _session_cookie_secure
-    else IS_RAILWAY
+    else False
 )
 SESSION_LIFETIME_HOURS = 8
 CORS_ORIGINS = [

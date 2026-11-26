@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Prepare the deployed database before the Flask web process starts.
+"""Prepare the configured database before the Flask web process starts.
 
-The Railway MySQL service supplies connection details through ``MYSQL_URL`` (or
-the equivalent ``MYSQL*`` variables). This script waits for the database,
-applies the idempotent schema with the configured database name, then runs the
-datasheet importer. It is safe to run on every deployment.
+Connection details can be supplied through ``MYSQL_URL`` or the equivalent
+``MYSQL*`` variables. This script waits for the database, applies the idempotent
+schema with the configured database name, then runs the datasheet importer. It
+is safe to run on every deployment.
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ def schema_statements() -> list[str]:
     """Read schema.sql without its hardcoded database create/use statements."""
     sql = SCHEMA_FILE.read_text(encoding="utf-8")
 
-    # Railway creates the database and supplies its name via MYSQLDATABASE.
+    # The database service may supply its name via MYSQLDATABASE.
     sql = re.sub(
         r"CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+edushelf_db\s+"
         r"CHARACTER\s+SET\s+utf8mb4\s+COLLATE\s+utf8mb4_unicode_ci\s*;",
