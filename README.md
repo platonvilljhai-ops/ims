@@ -246,15 +246,6 @@ Also confirm that no legacy patterns reappear:
 grep -RInE '\blocalStorage\b|\bvar\b|on(click|change|submit|input)=' --include='*.html' --include='*.js' .
 ```
 
-## Deployment notes
-
-- Set `FLASK_DEBUG=0` and a strong `SECRET_KEY` in production.
-- Set `SESSION_COOKIE_SECURE=true` when serving over HTTPS.
-- Run the app behind a production WSGI server rather than the Flask development
-  server, and keep the database reachable only from the application host.
-- Tailwind and Lucide are loaded from CDNs; hosting them locally removes that
-  external dependency.
-- Do not commit `.env`. It is excluded by `.gitignore`.
 
 ## Railway deployment
 
